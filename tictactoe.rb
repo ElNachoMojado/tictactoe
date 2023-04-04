@@ -1,14 +1,9 @@
-class Player
-  def initialize(player)
-    @player = player
-  end
-
-end
-
 class Game
+  attr_accessor :board
+
   def initialize
     @board = Board.new
-    @player = player
+    #@player = "X"
   end
 
 #Starts the game loop
@@ -16,7 +11,8 @@ class Game
   end
 
 #Gets the player move
-  def get_move
+  def get_move(column, row)
+    
   end
 
 #Makes a a random move for the opponent
@@ -29,15 +25,25 @@ class Game
 end
 
 class Board
+  attr_accessor :board
+
   def initialize
     @board = [["-","-","-"],["-","-","-"],["-","-","-"]]
   end
 
 #Prints the current state of the board
   def display
+    for row in board do
+        print row
+        puts ""
+    end
   end
 
-#Updates the board with the player's move
+#Updates the board with the players' move
   def update
   end
 end
+
+a = Game.new
+
+a.board.display
