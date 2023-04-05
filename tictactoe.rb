@@ -27,8 +27,9 @@ class Game
         number = gets.to_i
         break if number > 0 && number <=3
       end
-      @p_move[index] = number - 1
-    end  
+      @p_move[index] = number
+    end 
+    puts '' 
   end
 
 #Makes a a random move for the opponent
@@ -46,7 +47,7 @@ class Board
   attr_accessor :board
 
   def initialize
-    @board = [["-","-","-"],["-","-","-"],["-","-","-"]]
+    @board = [['@', 1, 2, 3],[1, "-","-","-"],[2, "-","-","-"],[3, "-","-","-"]]
   end
 
 #Prints the current state of the board
