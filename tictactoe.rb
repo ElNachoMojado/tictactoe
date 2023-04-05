@@ -1,16 +1,19 @@
 class Game
-  attr_accessor :board, :p_move, :player, :b_move, :bot
+  attr_accessor :p_move, :board
 
   def initialize
-    @board = Board.new
-    @player = "X"
-    @bot = "O"
+    @board = Board.new(self)
     @p_move = []
-    @b_move = []
   end
 
 #Starts the game loop
   def start
+    @board.display
+    loop do
+      get_move
+      @board.update(@p_move)
+      break if check_round_end
+    end
   end
 
 #Gets the player move
@@ -30,30 +33,23 @@ class Game
       @p_move[index] = number
     end 
     puts '' 
-  end
-
-#Makes a a random move for the opponent
-  def bot_move
-    loop do
-      2.times do |index|
-        @b_move[index] = rand(1..3)
-      end
-      break if @board[@b_move[0]][@b_move[1]] == "-"
-    end
+    
+    #@board.bot_move(@b_move)
   end
 
 #Checks if any endgame conditions have been met (win, lose, tie)
   def check_round_end
-    if win?(@player)
-      puts "Player X wins!"
+    if win?("X")
+      puts "You win!"
       return true
-    elsif win?(@bot)
-      puts "Player O wins!"
+    elsif win?("O")
+      puts "The bot wins D:"
       return true
     elsif tie?
       puts "It's a tie!"
       return true
     else
+      puts "Keep going!"
       return false
     end
   end
@@ -64,22 +60,22 @@ class Game
   def win?(player)
     #Checks rows
     (1..3).each do |row|
-      if @board[row][1..3].all? {|cell| cell == player}
+      if @board.board[row][1..3].all? {|cell| cell == player}
         return true
       end
     end
 
     #Checks columns
     (1..3).each do |col|
-      if [@board[1][col], @board[2][col], @board[3][col]].all? { |cell| cell == player }
+      if [@board.board[1][col], @board.board[2][col], @board.board[3][col]].all? { |cell| cell == player }
         return true
       end
     end
 
     #Checks diagonals
-    if [@board[1][1], @board[2][2], @board[3][3]].all? { |cell| cell == player }
+    if [@board.board[1][1], @board.board[2][2], @board.board[3][3]].all? { |cell| cell == player }
       return true
-    elsif [@board[1][3], @board[2][2], @board[3][1]].all? { |cell| cell == player }
+    elsif [@board.board[1][3], @board.board[2][2], @board.board[3][1]].all? { |cell| cell == player }
       return true
     end
 
@@ -88,7 +84,7 @@ class Game
 
   def tie?
     #Check if all cells are filled
-    if @board.flatten.none? { |cell| cell == "-" }
+    if @board.board.flatten.none? { |cell| cell == "-" }
         return true
     end
   end
@@ -96,10 +92,17 @@ end
 
 class Board
 
-  attr_accessor :board
+  attr_accessor :board, :game, :b_move 
 
-  def initialize
-    @board = [[0, 1, 2, 3],[1, "-","-","-"],[2, "-","-","-"],[3, "-","-","-"]]
+  def initialize(game)
+    @board = [
+        ["0", "1", "2", "3"],
+        ["1", "-","-","-"],
+        ["2", "-","-","-"],
+        ["3", "-","-","-"]
+    ]
+    @game = game
+    @b_move = []
   end
 
 #Prints the current state of the board
@@ -110,20 +113,24 @@ class Board
   end
 
 #Updates the board with the players' move
-  def update(instance_of_Game)
-    @board[instance_of_Game.p_move[0]][instance_of_Game.p_move[1]] = instance_of_Game.player
-    instance_of_Game.board = @board
-    instance_of_Game.bot_move
-    @board[instance_of_Game.b_move[0]][instance_of_Game.b_move[1]] = instance_of_Game.bot
-    instance_of_Game.board = @board
+  def update(p_move)
+    @board[p_move[0]][p_move[1]] = "X"
+    bot_move(@b_move)
     display
   end
+
+  def bot_move(b_move)
+    loop do
+      2.times do |index|
+        b_move[index] = rand(1..3)
+      end
+      
+      break if @board[b_move[0]][b_move[1]] == "-"
+    end
+    @board[b_move[0]][b_move[1]] = "O"
+  end
+
 end
 
-a = Game.new
-b = Board.new
-
-a.board.display
-a.get_move
-b.update(a)
-a.check_round_end
+tictactoe = Game.new
+tictactoe.start  
