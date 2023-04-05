@@ -29,7 +29,6 @@ class Game
       end
       @p_move[index] = number - 1
     end  
-    p @p_move
   end
 
 #Makes a a random move for the opponent
@@ -52,8 +51,8 @@ class Board
 
 #Prints the current state of the board
   def display
-    for row in @board do
-        p row
+    @board.each do |row|
+        puts row.join(' ')
     end
   end
 
@@ -61,6 +60,7 @@ class Board
   def update(instance_of_Game)
     @board[instance_of_Game.p_move[0]][instance_of_Game.p_move[1]] = instance_of_Game.player
     instance_of_Game.board = @board
+    display
   end
 end
 
@@ -70,4 +70,4 @@ b = Board.new
 a.board.display
 a.get_move
 b.update(a)
-a.board.display
+#a.board.display
