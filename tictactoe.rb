@@ -1,5 +1,5 @@
 class Game
-  attr_accessor :board, :p_move, :player, :b_move
+  attr_accessor :board, :p_move, :player, :b_move, :bot
 
   def initialize
     @board = Board.new
@@ -44,6 +44,53 @@ class Game
 
 #Checks if any endgame conditions have been met (win, lose, tie)
   def check_round_end
+    if win?(@player)
+      puts "Player X wins!"
+      return true
+    elsif win?(@bot)
+      puts "Player O wins!"
+      return true
+    elsif tie?
+      puts "It's a tie!"
+      return true
+    else
+      return false
+    end
+  end
+  
+
+  private
+
+  def win?(player)
+    #Checks rows
+    (1..3).each do |row|
+      if @board[row][1..3].all? {|cell| cell == player}
+        return true
+      end
+    end
+
+    #Checks columns
+    (1..3).each do |col|
+      if [@board[1][col], @board[2][col], @board[3][col]].all? { |cell| cell == player }
+        return true
+      end
+    end
+
+    #Checks diagonals
+    if [@board[1][1], @board[2][2], @board[3][3]].all? { |cell| cell == player }
+      return true
+    elsif [@board[1][3], @board[2][2], @board[3][1]].all? { |cell| cell == player }
+      return true
+    end
+
+    return false
+  end
+
+  def tie?
+    #Check if all cells are filled
+    if @board.flatten.none? { |cell| cell == "-" }
+        return true
+    end
   end
 end
 
@@ -52,7 +99,7 @@ class Board
   attr_accessor :board
 
   def initialize
-    @board = [['@', 1, 2, 3],[1, "-","-","-"],[2, "-","-","-"],[3, "-","-","-"]]
+    @board = [[0, 1, 2, 3],[1, "-","-","-"],[2, "-","-","-"],[3, "-","-","-"]]
   end
 
 #Prints the current state of the board
@@ -67,7 +114,7 @@ class Board
     @board[instance_of_Game.p_move[0]][instance_of_Game.p_move[1]] = instance_of_Game.player
     instance_of_Game.board = @board
     instance_of_Game.bot_move
-    @board[instance_of_Game.b_move[0]][instance_of_Game.b_move[1]] = "O"
+    @board[instance_of_Game.b_move[0]][instance_of_Game.b_move[1]] = instance_of_Game.bot
     instance_of_Game.board = @board
     display
   end
@@ -79,4 +126,4 @@ b = Board.new
 a.board.display
 a.get_move
 b.update(a)
-#a.bot_move
+a.check_round_end
